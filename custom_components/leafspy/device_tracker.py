@@ -6,6 +6,8 @@ from homeassistant.const import (
     ATTR_LATITUDE,
     ATTR_LONGITUDE,
     ATTR_BATTERY_LEVEL,
+    ATTR_BATTERY_HEALTH,
+    ATTR_BATTERY_CONDUCTANCE,
 )
 from homeassistant.components.device_tracker.const import SOURCE_TYPE_GPS
 from homeassistant.components.device_tracker.config_entry import (
@@ -91,6 +93,16 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
         return self._data.get('battery_level')
 
     @property
+    def battery_health(self):
+        """Return the battery health of the car."""
+        return self._data.get('battery_health')
+
+    @property
+    def battery_conductance(self):
+        """Return the battery conductance of the car."""
+        return self._data.get('battery_conductance')
+
+    @property
     def device_state_attributes(self):
         """Return device specific attributes."""
         return self._data.get('attributes')
@@ -147,6 +159,8 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
             'latitude': attr.get(ATTR_LATITUDE),
             'longitude': attr.get(ATTR_LONGITUDE),
             'battery_level': attr.get(ATTR_BATTERY_LEVEL),
+            'battery_health': attr.get(ATTR_BATTERY_HEALTH),
+            'battery_conductance': attr.get(ATTR_BATTERY_CONDUCTANCE),
             'attributes': attr
 
         }
@@ -167,6 +181,8 @@ def _parse_see_args(message):
         'latitude': float(message['Lat']),
         'longitude': float(message['Long']),
         'battery_level': float(message['SOC']),
+        'battery_health': float(message['SOH']),
+        'battery_conductance': float(message['Hx']),
         'attributes': {
             'amp_hours': float(message['AHr']),
             'trip': int(message['Trip']),
@@ -182,7 +198,8 @@ def _parse_see_args(message):
             'rpm': int(message['RPM']),
             'gids': int(message['Gids']),
             'elevation': float(message['Elv']),
-            'sequence': int(message['Seq'])
+            'sequence': int(message['Seq']),
+            'wiper_status': int(message['Wpr'])
         }
     }
 
